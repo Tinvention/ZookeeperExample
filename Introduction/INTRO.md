@@ -1,18 +1,16 @@
-#-------------
-#- ZooKeeper -
-#-------------
+### ZOOKEEPER
 
-## ZOOKEEPER
-
-### What is ZooKeeper?
+#### What is ZooKeeper?
 ZooKeeper is a high-performance coordination service for distributed applications.
-    * It exposes common services - such as naming, configuration management, synchronization, and group services - in a simple interface so you don't have to write them from scratch.
-    * You can use it off-the-shelf to implement consensus, group management, leader election, and presence protocols.
-    * And you can build on it for your own, specific needs.
 
-### Introduction
+    1. It exposes common services - such as naming, configuration management, synchronization, and group services - in a simple interface so you don't have to write them from scratch.
+    2. You can use it off-the-shelf to implement consensus, group management, leader election, and presence protocols.
+    3. And you can build on it for your own, specific needs.
 
-[N.B.: Refer to https://zookeeper.apache.org/doc/trunk/]
+#### Note
+
+This information was taken from the ZooKeeper documentation at https://zookeeper.apache.org/doc/trunk/ <br>
+Please refer to that site for futher information
 
 #### Install ZooKeeper
     1. Download and install the latest archive somewhere on the local file system
@@ -58,7 +56,8 @@ ZooKeeper is a high-performance coordination service for distributed application
     5. Timeliness - The clients view of the system is guaranteed to be up-to-date within a certain time bound
 
 #### API
-Zookeeper was designed to have a very simple programming interface. Thus only the following operations are supported:
+Zookeeper was designed to have a very simple programming interface. Thus only the following operations are supported
+
     1. create -> creates a node at a location in the tree
     2. delete -> deletes a node
     3. exists -> tests if a node exists at a location
@@ -66,17 +65,13 @@ Zookeeper was designed to have a very simple programming interface. Thus only th
     5. set data -> writes data to a node
     6. get children -> retrieves a list of children of a node
     7. sync -> waits for data to be propagated
+
 These basic operations can (and should) be used to implements higer level operations base on the needs
 
 #### Implementation overview
 A zookeeper service is made of three high level components: a request processor, an atomic broadcast and a replicated database.
-Each server replicates its own copy of the last two components.
-
-          |---------------------ZooKeeper Service-----------------------|
-  Write   |            |           |           |           |            |   Read
- Request --> Req.Proc. ---- txn ---> Ato.Broa. ---- txn ---> Rep.Data. <-- Request
-          |            |           |           |           |            |
-          |-------------------------------------------------------------|
+Each server replicates its own copy of the last two components.<br>
+See https://zookeeper.apache.org/doc/trunk/images/zkcomponents.jpg to get an idea of how these components are connected to each other.
 
     1. Replicated database:
        * Stored in-memory and contains the whole tree
@@ -91,13 +86,20 @@ Each server replicates its own copy of the last two components.
        * The messaging layer is atomic. This guarantees that the 
          replicated databases never diverge (although they can be temporarily 'unsynched')
 
-### API
-org.apache.zookeeper
-org.apache.zookeeper.data
--> ZooKeeper / ZooKeeper(session_id,session_pwd)
+### API (TODO)
+
+Packages:
+
+    * org.apache.zookeeper
+    * org.apache.zookeeper.data
+
+ZooKeeper / ZooKeeper(session_id,session_pwd)
+
     |-> IO thread (java.nio) -> session maintenance (reconnect,heartbear,etc), synchronous responses
-    |-> Event thread         -> event callbacks
+    |-> Event thread         -> event callbacks<br>
+    
 Consequences:
+
     1. All completions for asynchronous calls and watcher callbacks will be made in order, one at a time.
        The caller can do any processing they wish, but no other callbacks will be processed during that time
     2. Callbacks do not block the processing of the IO thread or the processing of the synchronous calls
