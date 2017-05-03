@@ -13,7 +13,8 @@
 hs_err_pid*
 
 # Eclipse related stuff
-.classpath
-.project
-.settings/
-target/
+BarrierExample/.classpath
+BarrierExample/.project
+BarrierExample/.settings/
+BarrierExample/target/
+BarrierExample/lib/
